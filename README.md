@@ -1,4 +1,4 @@
-Tool for pulling Fantasy Tennis stats. It currently only works for the Australian Open; implementing for slams is WIP. Usage instructions:
+Tool for pulling Fantasy Tennis stats. It currently only works for the Australian Open; implementing for other slams is WIP. Usage instructions:
 
 1. Clone this repository.
 2. Modify the input.csv file to pull the stats you want. The format is csv. Each row has (playerName, playerGender, playerPositionInDraw, stat, round). playerPositionInDraw can be found by viewing the draw and seeing where the player appears in the Round 1 draw (i.e. top of the draw is position 1, bottom of the draw is position 128).
