@@ -1,22 +1,6 @@
 import json
 
 # TODO: Is it possible to calculate playerId from playerName?
-def getStat(playerName, playerId, round, gender, stat, http):
-    matchStatsUrl = AusOpenUrlConstructor(playerId=playerId, gender=gender, round=round).getUrl()
-
-    resp = http.request("GET", matchStatsUrl)
-    if (resp.status != 200):
-        print("Error fetching URL:", matchStatsUrl)
-    
-    jsonResp = json.loads(resp.data.decode('utf-8'))
-
-    if (jsonResp["match_state"] != "Complete"):
-        print("This match is not completed!")
-
-    ts = AusOpenStatsCalculator(jsonResp, round, playerId)
-
-    print("Stat:", stat,  "for player:", playerName, "in round:", round, "is:", ts.getStat(stat))
-
 class AusOpenUrlConstructor:
     """
     Class for constructing the URL used to access AusOpen stats.
@@ -54,13 +38,26 @@ class AusOpenStatsCalculator:
     """
     Class for calculating fantasy tennis stats for the Australian Open.
     """
-    def __init__(self, jsonResp, round, playerId):
+    def __init__(self, round, playerId, gender, http):
         self.team = self.getTeam(round, playerId)
-        self.jsonResp = jsonResp
+        self.statsObj = self.getStatsObject(playerId, gender, round, http)
+    
+    def getStatsObject(self, playerId, gender, round, http):
+        matchUrl = AusOpenUrlConstructor(playerId=playerId,gender=gender,round=round).getUrl()
+
+        resp = http.request("GET", matchUrl)
+        if (resp.status != 200):
+            print("Error fetching URL:", self.url)
+        
+        jsonResp = json.loads(resp.data.decode('utf-8'))
+
+        if (jsonResp["match_state"] != "Complete"):
+            print("This match is not completed!")
 
         numSets = len(jsonResp['stats']['key_stats'][0]['sets'])
-        self.statsObj = jsonResp['stats']['key_stats'][0]['sets'][numSets - 1]
-        assert (self.statsObj['set'] == "All")
+        statsObj = jsonResp['stats']['key_stats'][0]['sets'][numSets - 1]
+        assert (statsObj['set'] == "All")
+        return statsObj
 
     def getTeam(self, round, playerId):
         while (round > 1):
