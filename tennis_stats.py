@@ -41,6 +41,9 @@ class AusOpenStatsCalculator:
     def __init__(self, round, playerId, gender, http):
         self.team = self.getTeam(round, playerId)
         self.statsObj = self.getStatsObject(playerId, gender, round, http)
+
+    def getDisplayUrl(self):
+        return self.displayUrl
     
     def getStatsObject(self, playerId, gender, round, http):
         matchUrl = AusOpenUrlConstructor(playerId=playerId,gender=gender,round=round).getUrl()
@@ -50,6 +53,8 @@ class AusOpenStatsCalculator:
             print("Error fetching URL:", self.url)
         
         jsonResp = json.loads(resp.data.decode('utf-8'))
+
+        self.displayUrl = jsonResp['match_centre_link'] + "#!stats"
 
         if (jsonResp["match_state"] != "Complete"):
             print("This match is not completed!")

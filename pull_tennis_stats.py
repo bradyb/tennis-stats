@@ -15,3 +15,4 @@ with open('input.csv', newline='') as csvfile:
         playerName, gender, playerId, stat, round = row[0], row[1], int(row[2]), row[3], int(row[4])
         ts = AusOpenStatsCalculator(round, playerId, gender, http)
         print("Stat:", stat,  "for player:", playerName, "in round:", round, "is:", ts.getStat(stat))
+        print("Match stats URL is:", ts.getDisplayUrl(), "\n")
