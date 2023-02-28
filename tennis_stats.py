@@ -40,7 +40,8 @@ class AusOpenStatsCalculator:
     """
     def __init__(self, round, playerId, gender, http):
         self.team = self.getTeam(round, playerId)
-        self.statsObj = self.getStatsObject(playerId, gender, round, http)
+        self.jsonResp, self.statsObj = self.getStatsObject(playerId, gender, round, http)
+        self.displayUrl = self.jsonResp['match_centre_link'] + "#!stats"
 
     def getDisplayUrl(self):
         return self.displayUrl
@@ -54,15 +55,13 @@ class AusOpenStatsCalculator:
         
         jsonResp = json.loads(resp.data.decode('utf-8'))
 
-        self.displayUrl = jsonResp['match_centre_link'] + "#!stats"
-
         if (jsonResp["match_state"] != "Complete"):
             print("This match is not completed!")
 
         numSets = len(jsonResp['stats']['key_stats'][0]['sets'])
         statsObj = jsonResp['stats']['key_stats'][0]['sets'][numSets - 1]
         assert (statsObj['set'] == "All")
-        return statsObj
+        return jsonResp, statsObj
 
     def getTeam(self, round, playerId):
         while (round > 1):
